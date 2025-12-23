@@ -1,0 +1,75 @@
+package svg
+
+import (
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/beevik/etree"
+	"github.com/binary-sort/polynest.git/geometry"
+)
+
+func ParseSVG(path string) ([]Shape, error) {
+	doc := etree.NewDocument()
+	if err := doc.ReadFromFile(path); err != nil {
+		return nil, err
+	}
+
+	root := doc.Root()
+	var shapes []Shape
+
+	for _, el := range root.FindElements(".//polygon") {
+		pointsAttr := el.SelectAttrValue("points", "")
+		if pointsAttr == "" {
+			continue
+		}
+
+		polygon, err := parsePolygonPoints(pointsAttr)
+		if err != nil {
+			return nil, err
+		}
+
+		shapes = append(shapes, Shape{
+			Polygon: polygon,
+		})
+	}
+
+	for _, el := range root.FindElements(".//rect") {
+		x, _ := strconv.ParseFloat(el.SelectAttrValue("x", "0"), 64)
+		y, _ := strconv.ParseFloat(el.SelectAttrValue("y", "0"), 64)
+		w, _ := strconv.ParseFloat(el.SelectAttrValue("width", "0"), 64)
+		h, _ := strconv.ParseFloat(el.SelectAttrValue("height", "0"), 64)
+
+		poly := geometry.Polygon{
+			Points: []geometry.Point{
+				{X: x, Y: y},
+				{X: x + w, Y: y},
+				{X: x + w, Y: y + h},
+				{X: x, Y: y + h},
+			},
+		}
+
+		shapes = append(shapes, Shape{Polygon: poly})
+	}
+
+	return shapes, nil
+}
+
+func parsePolygonPoints(points string) (geometry.Polygon, error) {
+	fields := strings.FieldsFunc(points, func(r rune) bool {
+		return r == ',' || r == ' '
+	})
+
+	if len(fields)%2 != 0 {
+		return geometry.Polygon{}, fmt.Errorf("invalid polygon points")
+	}
+
+	var pts []geometry.Point
+	for i := 0; i < len(fields); i += 2 {
+		x, _ := strconv.ParseFloat(fields[i], 64)
+		y, _ := strconv.ParseFloat(fields[i+1], 64)
+		pts = append(pts, geometry.Point{X: x, Y: y})
+	}
+
+	return geometry.Polygon{Points: pts}, nil
+}

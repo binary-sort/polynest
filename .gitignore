@@ -1,0 +1,35 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+
+# Test binary, built with `go test -c`
+*.test
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+
+# Dependency directories (uncomment to ignore vendor/ folder)
+# vendor/
+
+# Project-local vendor for tools/external libs
+go.mod.sum
+go.work.sum
+
+# Environment files
+.env
+
+# IDE-specific files and directories
+.idea/         # IntelliJ IDEA
+.vscode/       # VS Code (consider adding settings.json to a global ignore if preferred)
+*.swp          # Vim
+*.swo          # Vim
+
+
+# Operating System files
+.DS_Store      # macOS
+Thumbs.db      # Windows
+
