@@ -52,6 +52,22 @@ func ParseSVG(path string) ([]Shape, error) {
 		shapes = append(shapes, Shape{Polygon: poly})
 	}
 
+	for _, el := range root.FindElements(".//path") {
+		d := el.SelectAttrValue("d", "")
+		if d == "" {
+			continue
+		}
+
+		polys, err := ParsePath(d)
+		if err != nil {
+			continue // skip unsupported paths
+		}
+
+		for _, p := range polys {
+			shapes = append(shapes, Shape{Polygon: p})
+		}
+	}
+
 	return shapes, nil
 }
 
