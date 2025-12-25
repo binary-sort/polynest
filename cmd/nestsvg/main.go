@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/binary-sort/polynest.git/svg"
 )
 
 func main() {
@@ -27,9 +29,12 @@ func main() {
 	fmt.Println("Sheet:", *width, "x", *height)
 	fmt.Println("Spacing:", *spacing)
 
-	// TODO:
-	// 1. Parse SVG
-	// 2. Convert paths to polygons
-	// 3. Run nesting algorithm
-	// 4. Write output SVG
+	shapes, err := svg.ParseSVG(*input)
+	if err != nil {
+		panic(err)
+	}
+
+	shapes = svg.PrepareShapes(shapes, *spacing)
+
+	fmt.Println("Prepared shapes:", len(shapes))
 }
