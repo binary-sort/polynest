@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/binary-sort/polynest.git/geometry"
+	"github.com/binary-sort/polynest.git/nesting"
 	"github.com/binary-sort/polynest.git/svg"
 )
 
@@ -36,5 +38,15 @@ func main() {
 
 	shapes = svg.PrepareShapes(shapes, *spacing)
 
+	packer := nesting.NewPacker(*width, *height, 5)
+
+	var polys []geometry.Polygon
+	for _, s := range shapes {
+		polys = append(polys, s.Polygon)
+	}
+
+	placed := packer.Pack(polys)
+
 	fmt.Println("Prepared shapes:", len(shapes))
+	fmt.Println("Placed shapes:", len(placed))
 }

@@ -33,3 +33,10 @@ func (p Polygon) BoundingBox() BoundingBox {
 		Max: Point{maxX, maxY},
 	}
 }
+
+func (a BoundingBox) Intersects(b BoundingBox) bool {
+	return !(a.Max.X <= b.Min.X ||
+		a.Min.X >= b.Max.X ||
+		a.Max.Y <= b.Min.Y ||
+		a.Min.Y >= b.Max.Y)
+}

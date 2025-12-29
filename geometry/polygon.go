@@ -59,3 +59,14 @@ func (p Polygon) Offset(spacing float64) Polygon {
 
 	return Polygon{Points: pts}
 }
+
+func (p Polygon) Translate(dx, dy float64) Polygon {
+	var pts []Point
+	for _, pt := range p.Points {
+		pts = append(pts, Point{
+			X: pt.X + dx,
+			Y: pt.Y + dy,
+		})
+	}
+	return Polygon{Points: pts}
+}
