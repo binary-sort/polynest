@@ -2,12 +2,39 @@ package svg
 
 import (
 	"fmt"
+	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/beevik/etree"
 	"github.com/binary-sort/polynest.git/geometry"
+	"github.com/binary-sort/polynest.git/model"
 )
+
+func ParseSVGAsPart(path string, quantity int) (model.Part, error) {
+	shapes, err := ParseSVG(path)
+
+	if err != nil {
+		return model.Part{}, err
+	}
+
+	var polys []geometry.Polygon
+
+	for _, s := range shapes {
+		if s.Polygon.IsValid() {
+			polys = append(polys, s.Polygon)
+		}
+	}
+
+	part := model.Part{
+		Name:     filepath.Base(path),
+		Polygons: polys,
+		Quantity: quantity,
+	}
+
+	part.BBox = geometry.BoundingBoxOfPolygons(part.Polygons)
+	return part, nil
+}
 
 func ParseSVG(path string) ([]Shape, error) {
 	doc := etree.NewDocument()
