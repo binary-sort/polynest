@@ -49,4 +49,12 @@ func main() {
 
 	fmt.Println("Prepared shapes:", len(shapes))
 	fmt.Println("Placed shapes:", len(placed))
+
+	err = svg.WriteSVG(*output, *width, *height, placed)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Output written to:", *output)
+
 }
